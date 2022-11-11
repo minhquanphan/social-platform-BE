@@ -63,4 +63,36 @@ userController.login = catchAsync(async (req, res, next) => {
     "Login successful"
   );
 });
+
+userController.getAll = catchAsync(async (req, res, next) => {
+  let { page, limit } = req.query;
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 20;
+  const count = await User.countDocuments({ isDeleted: false });
+  const totalPage = Math.ceil(count / limit);
+  const offset = limit * (page - 1);
+
+  let userList = await User.find({ isDeleted: false })
+    .sort({ createAt: -1 })
+    .skip(offset)
+    .limit(limit);
+  return sendResponse(
+    res,
+    200,
+    true,
+    { userList, totalPage },
+    null,
+    "successful"
+  );
+});
+
+userController.getSingleUserById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    throw new AppError(404, "User Not Found", "Get current user error");
+  }
+  return sendResponse(res, 200, true, user, null, "Success");
+});
+
 module.exports = userController;
