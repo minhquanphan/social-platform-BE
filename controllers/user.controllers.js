@@ -95,4 +95,13 @@ userController.getSingleUserById = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, user, null, "Success");
 });
 
+userController.getCurrentUserProfile = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const currentUser = await User.findById(currentUserId);
+  if (!currentUser) {
+    throw new AppError(404, "User not found", "Error");
+  }
+  return sendResponse(res, 200, true, currentUser, null, "Success");
+});
+
 module.exports = userController;
