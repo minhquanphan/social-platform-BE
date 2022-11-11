@@ -124,7 +124,7 @@ userController.deactivate = catchAsync(async (req, res, next) => {
   const { currentUserId } = req;
   let currentUser = await User.findByIdAndUpdate(
     currentUserId,
-    { isDeleted: false },
+    { isDeleted: true },
     { new: true }
   );
   if (!currentUser) {
