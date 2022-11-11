@@ -10,4 +10,11 @@ const Post = require("../models/Post");
 
 const postController = {};
 
-module.exports = userController;
+postController.createPost = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { content, image } = req.body;
+  let post = await Post.create({ author: currentUserId, content, image });
+  return sendResponse(res, 200, true, post, null, "Create post success");
+});
+
+module.exports = postController;

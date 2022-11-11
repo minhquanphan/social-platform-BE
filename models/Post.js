@@ -3,8 +3,9 @@ const Schema = mongoose.Schema;
 
 const postSchema = Schema(
   {
+    author: { type: Schema.Types.ObjectId, required: true, ref: "Users" },
     content: { type: String, required: true },
-    images: { type: String, required: true },
+    image: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
   },
   {
