@@ -67,7 +67,7 @@ userController.login = catchAsync(async (req, res, next) => {
 userController.getAll = catchAsync(async (req, res, next) => {
   let { page, limit } = req.query;
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 20;
+  limit = parseInt(limit) || 35;
   const count = await User.countDocuments({ isDeleted: false });
   const totalPage = Math.ceil(count / limit);
   const offset = limit * (page - 1);
@@ -102,6 +102,35 @@ userController.getCurrentUserProfile = catchAsync(async (req, res, next) => {
     throw new AppError(404, "User not found", "Error");
   }
   return sendResponse(res, 200, true, currentUser, null, "Success");
+});
+
+userController.updateCurrentUserProfile = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  let currentUser = await User.findById(currentUserId);
+  if (!currentUser) {
+    throw new AppError(404, "User not found", "Error");
+  }
+  const allows = ["name", "about me"];
+  allows.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      currentUser[field] = req.body[field];
+    }
+  });
+  await currentUser.save();
+  return sendResponse(res, 200, true, currentUser, null, "Success");
+});
+
+userController.deactivate = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  let currentUser = await User.findByIdAndUpdate(
+    currentUserId,
+    { isDeleted: false },
+    { new: true }
+  );
+  if (!currentUser) {
+    throw new AppError(404, "User not found", "Error");
+  }
+  return sendResponse(res, 200, true, {}, null, "Success");
 });
 
 module.exports = userController;
