@@ -51,7 +51,7 @@ userController.login = catchAsync(async (req, res, next) => {
   }
   const isMatch = bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new AppError(409, "Invalid password", "Wrong password");
+    throw new AppError(400, "Invalid password", "Wrong password");
   }
   const accessToken = user.generateToken();
   return sendResponse(
