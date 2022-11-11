@@ -20,12 +20,15 @@ app.use(cors());
 /* DB Connection */
 mongoose
   .connect(mongoURI)
-  .then(() => console.log(`DB connected`))
+  .then(() => {
+    console.log(`DB connected`);
+    // require("./createFriend.js");
+  })
   .catch((err) => console.log(err));
 
 app.use("/api", indexRouter);
 
-// catch 404 and forward to error handler
+// catch 404 and forard to error handler
 app.use((req, res, next) => {
   const err = new Error("Not Found");
   err.statusCode = 404;

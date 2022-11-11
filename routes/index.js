@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-/* GET home page. */
-
+/* User endpoints. */
+const userRouter = require("./users.api");
+router.use("/users", userRouter);
 module.exports = router;
