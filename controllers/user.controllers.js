@@ -65,14 +65,24 @@ userController.login = catchAsync(async (req, res, next) => {
 });
 
 userController.getAll = catchAsync(async (req, res, next) => {
-  let { page, limit } = req.query;
+  let { page, limit, ...filter } = { ...req.query };
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 35;
-  const count = await User.countDocuments({ isDeleted: false });
+
+  // search user by name, email
+  const filterCondition = [{ isDeleted: false }];
+  const allows = ["name", "email"];
+  allows.forEach((field) => {
+    if (filter[field] !== undefined) {
+      filterCondition.push({ [field]: filter[field] });
+    }
+  });
+  const filterCritera = filterCondition.length ? { $and: filterCondition } : {};
+
+  const count = await User.countDocuments(filterCritera);
   const totalPage = Math.ceil(count / limit);
   const offset = limit * (page - 1);
-
-  let userList = await User.find({ isDeleted: false })
+  let userList = await User.find(filterCritera)
     .sort({ createAt: -1 })
     .skip(offset)
     .limit(limit);
