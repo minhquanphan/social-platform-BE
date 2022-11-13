@@ -58,8 +58,9 @@ This include all common features of a Social Platform.
 2. Install project dependencies
 
    ```console
-   npm i nodemon cors bcryptjs dotenv
-   npm i jsonwebtoken mongoose
+   npm install nodemon cors bcryptjs dotenv
+   npm install jsonwebtoken mongoose
+   npm install express-validator
    ```
 
 3. Add dev script
