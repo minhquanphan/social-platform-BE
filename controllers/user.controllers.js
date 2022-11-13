@@ -47,7 +47,7 @@ userController.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email }, "+password");
   if (!user) {
-    throw new AppError(400, "Invalid email or password", "Login error");
+    throw new AppError(400, "User not found", "Login error");
   }
   const isMatch = bcrypt.compare(password, user.password);
   if (!isMatch) {
