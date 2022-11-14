@@ -78,7 +78,11 @@ friendController.allFriends = catchAsync(async (req, res, next) => {
   });
   console.log("friendIDs", friendIDs);
 
-  const filterCritera = { _id: { $in: friendIDs } };
+  const filterCondition = [{ _id: { $in: friendIDs } }];
+  if (filter.name !== undefined) {
+    filterCondition.push({ ["name"]: { $regex: filter.name, $options: "i" } });
+  }
+  const filterCritera = filterCondition.length ? { $and: filterCondition } : {};
   const offset = limit * (page - 1);
   const count = await User.countDocuments(filterCritera);
   const totalPages = Math.ceil(count / limit);
