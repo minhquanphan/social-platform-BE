@@ -67,7 +67,7 @@ userController.login = catchAsync(async (req, res, next) => {
 userController.getAll = catchAsync(async (req, res, next) => {
   let { page, limit, ...filter } = { ...req.query };
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 35;
+  limit = parseInt(limit) || 10;
 
   // search user by name, email
   const filterCondition = [{ isDeleted: false }];
@@ -83,7 +83,7 @@ userController.getAll = catchAsync(async (req, res, next) => {
   const totalPage = Math.ceil(count / limit);
   const offset = limit * (page - 1);
   let userList = await User.find(filterCritera)
-    .sort({ createAt: -1 })
+    .sort({ createdAt: -1 })
     .skip(offset)
     .limit(limit);
   return sendResponse(
