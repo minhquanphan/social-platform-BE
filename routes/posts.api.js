@@ -13,5 +13,3 @@ router.put("/:postId", loginRequired, updatePost);
 router.delete("/:postId", loginRequired, deletePost);
 
 module.exports = router;
-
-createPost;
