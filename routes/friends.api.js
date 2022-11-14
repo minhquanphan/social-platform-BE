@@ -3,6 +3,8 @@ const { body } = require("express-validator");
 const {
   makeFriendRequest,
   allFriends,
+  incomingRequests,
+  outgoingRequests,
 } = require("../controllers/friend.controllers");
 
 const { loginRequired } = require("../middlewares/authentication");
@@ -17,5 +19,7 @@ router.post(
 );
 
 router.get("/all", loginRequired, allFriends);
+router.get("/requests/incoming", loginRequired, incomingRequests);
+router.get("/requests/outgoing", loginRequired, outgoingRequests);
 
 module.exports = router;
