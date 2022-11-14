@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const friendSchema = Schema(
   {
-    from: { type: Schema.Types.ObjectId, required: true, ref: "Users" },
-    to: { type: Schema.Types.ObjectId, required: true, ref: "Users" },
+    from: { type: Schema.ObjectId, required: true, ref: "User" }, //Requestor
+    to: { type: Schema.ObjectId, required: true, ref: "User" }, //Receiver
     status: { type: String, enum: ["pending", "accepted", "declined"] },
   },
   {
@@ -12,6 +12,5 @@ const friendSchema = Schema(
   }
 );
 
-const Friend = mongoose.model("Friends", friendSchema);
-
+const Friend = mongoose.model("Friend", friendSchema);
 module.exports = Friend;
