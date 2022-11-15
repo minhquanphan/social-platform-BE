@@ -33,11 +33,11 @@ router.get("/requests/outgoing", loginRequired, outgoingRequests);
 
 router.put(
   "/requests/:receiverId",
+  loginRequired,
   validate([
     param("receiverId").exists().isString().custom(checkObjectId),
     body("status").exists().isString().custom(statusValueCheck),
   ]),
-  loginRequired,
   responseToRequests
 );
 
