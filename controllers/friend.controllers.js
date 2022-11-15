@@ -1,6 +1,6 @@
 // 1. Authenticated user can make friend request to other
-// 2. Authenticated user can see list of friend
-// 3. Authenticated user can accept or reject a friend request
+// 2. Authenticated user can accept or reject a friend request
+// 3. Authenticated user can see list of friend
 // 4. Authenticated user can see a list of all request receive
 // 5. Author can see a list of all request sent
 // 6. Author of Request can cancel the request
@@ -56,6 +56,25 @@ friendController.makeFriendRequest = catchAsync(async (req, res, next) => {
     null,
     "Make friend request successful"
   );
+});
+
+friendController.responseToRequests = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { status } = req.body;
+  const { receiverId } = req.params;
+
+  let friendShip = await Friend.findOne({
+    to: currentUserId,
+    from: receiverId,
+    status: "pending",
+  });
+
+  if (!friendShip) {
+    throw new AppError(400, "Friend request not found", "Respone to requests");
+  }
+  friendShip.status = status;
+  friendShip = await friendShip.save();
+  return sendResponse(res, 200, true, friendShip, null, "Success");
 });
 
 friendController.allFriends = catchAsync(async (req, res, next) => {
@@ -167,25 +186,6 @@ friendController.outgoingRequests = catchAsync(async (req, res, next) => {
     null,
     "Successful"
   );
-});
-
-friendController.responseToRequests = catchAsync(async (req, res, next) => {
-  const { currentUserId } = req;
-  const { status } = req.body;
-  const { receiverId } = req.params;
-
-  let friendShip = await Friend.findOne({
-    to: currentUserId,
-    from: receiverId,
-    status: "pending",
-  });
-
-  if (!friendShip) {
-    throw new AppError(400, "Friend request not found", "Respone to requests");
-  }
-  friendShip.status = status;
-  friendShip = await friendShip.save();
-  return sendResponse(res, 200, true, friendShip, null, "Success");
 });
 
 friendController.cancelOwnRequests = catchAsync(async (req, res, next) => {
