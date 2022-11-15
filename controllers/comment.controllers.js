@@ -24,4 +24,10 @@ commentController.createNewComments = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, comment, null, "Comment success");
 });
 
+commentController.getAllComments = catchAsync(async (req, res, next) => {});
+
+commentController.updateComment = catchAsync(async (req, res, next) => {});
+
+commentController.deleteComment = catchAsync(async (req, res, next) => {});
+
 module.exports = commentController;

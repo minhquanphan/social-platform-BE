@@ -50,4 +50,27 @@ postController.deletePost = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, {}, null, "Post deleted");
 });
 
+postController.allPosts = catchAsync(async (req, res, next) => {
+  let { page, limit } = req.query;
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 20;
+  const offset = limit * (page - 1);
+  const count = await Post.countDocuments({ isDeleted: false });
+  const totalPages = Math.ceil(count / limit);
+  let postList = await Post.find({ isDeleted: false })
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit)
+    .populate("author");
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { postList, totalPages },
+    null,
+    "Successful get post list"
+  );
+});
+
 module.exports = postController;
