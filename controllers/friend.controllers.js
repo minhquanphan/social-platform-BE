@@ -6,7 +6,6 @@
 // 6. Author of Request can cancel the request✅
 // 7. Friend can unfriend✅
 
-const bcrypt = require("bcryptjs/dist/bcrypt");
 const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
 const Friend = require("../models/Friendship");
 const User = require("../models/User");

@@ -3,8 +3,6 @@
 // 3. Author can delete post by post's id ✅
 // 4. Friend can see list of friend's post
 
-const bcrypt = require("bcryptjs/dist/bcrypt");
-
 const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
 const Post = require("../models/Post");
 

@@ -12,4 +12,8 @@ router.use("/posts", postRouter);
 /* Friend endpoints. */
 const friendRouter = require("./friends.api");
 router.use("/friends", friendRouter);
+
+/* Comment endpoints. */
+const commentRouter = require("./comment.api");
+router.use("/comments", commentRouter);
 module.exports = router;
