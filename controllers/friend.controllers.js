@@ -169,4 +169,56 @@ friendController.outgoingRequests = catchAsync(async (req, res, next) => {
   );
 });
 
+friendController.responseToRequests = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { status } = req.body;
+  const { receiverId } = req.params;
+
+  let friendShip = await Friend.findOne({
+    to: currentUserId,
+    from: receiverId,
+    status: "pending",
+  });
+
+  if (!friendShip) {
+    throw new AppError(400, "Friend request not found", "Respone to requests");
+  }
+  friendShip.status = status;
+  friendShip = await friendShip.save();
+  return sendResponse(res, 200, true, friendShip, null, "Success");
+});
+
+friendController.cancelOwnRequests = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { receiverId } = req.body;
+
+  let friendShip = await Friend.findOneAndDelete({
+    from: currentUserId,
+    to: receiverId,
+    status: "pending",
+  });
+
+  if (!friendShip) {
+    throw new AppError(400, "Friend request not found", "Cancel error");
+  }
+  return sendResponse(res, 200, true, {}, null, "Success");
+});
+
+friendController.unfriend = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { receiverId } = req.params;
+
+  let friendShip = await Friend.findOneAndDelete({
+    $or: [
+      { from: currentUserId, to: receiverId, status: "accepted" },
+      { to: currentUserId, from: receiverId, status: "accepted" },
+    ],
+  });
+
+  if (!friendShip) {
+    throw new AppError(400, "Friend request not found", "Unfriend error");
+  }
+  return sendResponse(res, 200, true, {}, null, "Success");
+});
+
 module.exports = friendController;
