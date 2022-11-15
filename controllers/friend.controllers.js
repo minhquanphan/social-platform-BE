@@ -14,7 +14,7 @@ const User = require("../models/User");
 const friendController = {};
 
 friendController.makeFriendRequest = catchAsync(async (req, res, next) => {
-  const requestorId = req.currentUserId;
+  const { currentUserId } = req;
   const receiverId = req.body.to;
 
   const receiver = await User.findById(receiverId);
@@ -25,19 +25,19 @@ friendController.makeFriendRequest = catchAsync(async (req, res, next) => {
 
   let friendship = await Friend.findOne({
     $or: [
-      { from: requestorId, to: receiverId },
-      { from: receiverId, to: requestorId },
+      { from: currentUserId, to: receiverId },
+      { from: receiverId, to: currentUserId },
     ],
   });
 
   if (!friendship) {
     friendship = await Friend.create({
-      from: requestorId,
+      from: currentUserId,
       to: receiverId,
       status: "pending",
     });
   } else if (friendship.status === "declined") {
-    friendship.from = requestorId;
+    friendship.from = currentUserId;
     friendship.to = receiverId;
     friendship.status = "pending";
     await friendship.save();
