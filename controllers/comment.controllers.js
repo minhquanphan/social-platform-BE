@@ -11,7 +11,7 @@ const commentController = {};
 
 commentController.createNewComments = catchAsync(async (req, res, next) => {
   const { currentUserId } = req;
-  const { postId, content } = req.body;
+  const { postId, content, image } = req.body;
   const post = await Post.findOne({ _id: postId, isDeleted: false });
   if (!post) {
     throw new AppError(404, "Post not found", "Comment error");
@@ -20,14 +20,45 @@ commentController.createNewComments = catchAsync(async (req, res, next) => {
     author: currentUserId,
     post: postId,
     content: content,
+    image: image,
   });
   return sendResponse(res, 200, true, comment, null, "Comment success");
 });
 
-commentController.getAllComments = catchAsync(async (req, res, next) => {});
+commentController.updateComment = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { commentId } = req.params;
+  let comments = await Comment.findOne({ _id: commentId, isDeleted: false });
+  if (!comments) {
+    throw new AppError(404, "No comment found", "Comment error");
+  }
+  if (!comments.author.equals(currentUserId)) {
+    throw new AppError(404, "Unauthorized", "Unauthorized");
+  }
+  const allows = ["content", "image"];
+  allows.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      comments[field] = req.body[field];
+    }
+  });
+  await comments.save();
+  return sendResponse(res, 200, true, comments, null, "Comment updated");
+});
 
-commentController.updateComment = catchAsync(async (req, res, next) => {});
-
-commentController.deleteComment = catchAsync(async (req, res, next) => {});
+commentController.deleteComment = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { commentId } = req.params;
+  let comments = await Comment.findByIdAndDelete({
+    _id: commentId,
+    isDeleted: false,
+  });
+  if (!comments) {
+    throw new AppError(404, "No comment found", "Comment error");
+  }
+  if (!comments.author.equals(currentUserId)) {
+    throw new AppError(404, "Unauthorized", "Unauthorized");
+  }
+  return sendResponse(res, 200, true, {}, null, "Deleted success");
+});
 
 module.exports = commentController;
