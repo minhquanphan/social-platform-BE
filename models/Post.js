@@ -5,7 +5,7 @@ const postSchema = Schema(
   {
     author: { type: Schema.Types.ObjectId, required: true, ref: "Users" },
     content: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: String },
     isDeleted: { type: Boolean, default: false },
   },
   {
