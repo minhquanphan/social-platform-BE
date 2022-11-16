@@ -28,7 +28,7 @@ commentController.createNewComments = catchAsync(async (req, res, next) => {
 commentController.updateComment = catchAsync(async (req, res, next) => {
   const { currentUserId } = req;
   const { commentId } = req.params;
-  let comments = await Comment.findOne({ _id: commentId, isDeleted: false });
+  let comments = await Comment.findOne({ _id: commentId });
   if (!comments) {
     throw new AppError(404, "No comment found", "Comment error");
   }
