@@ -4,6 +4,7 @@ const {
   createNewComments,
   updateComment,
   deleteComment,
+  getAllCommentsByPost,
 } = require("../controllers/comment.controllers");
 const { loginRequired } = require("../middlewares/authentication");
 const { validate, checkObjectId } = require("../middlewares/validator");
@@ -34,5 +35,12 @@ router.delete(
   loginRequired,
   validate([param("commentId").exists().isString().custom(checkObjectId)]),
   deleteComment
+);
+
+router.get(
+  "/:postId",
+  loginRequired,
+  validate([param("postId").exists().isString().custom(checkObjectId)]),
+  getAllCommentsByPost
 );
 module.exports = router;

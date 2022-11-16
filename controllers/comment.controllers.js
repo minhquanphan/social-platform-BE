@@ -61,4 +61,31 @@ commentController.deleteComment = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, {}, null, "Deleted success");
 });
 
+commentController.getAllCommentsByPost = catchAsync(async (req, res, next) => {
+  const { postId } = req.params;
+  const post = await Post.findOne({ _id: postId, isDeleted: false });
+  if (!post) {
+    throw new AppError(404, "Post not found", "Error request");
+  }
+  let { page, limit } = req.query;
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 15;
+  const count = await Comment.countDocuments({ isDeleted: false });
+  const offset = limit * (page - 1);
+  const totalPages = Math.ceil(count / limit);
+  let comments = await Comment.find({ post: postId, isDeleted: false })
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit)
+    .populate("author");
+  return sendResponse(
+    res,
+    200,
+    true,
+    { comments, totalPages },
+    null,
+    "Success"
+  );
+});
+
 module.exports = commentController;
