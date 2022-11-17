@@ -50,7 +50,6 @@ commentController.deleteComment = catchAsync(async (req, res, next) => {
   const { commentId } = req.params;
   let comments = await Comment.findByIdAndDelete({
     _id: commentId,
-    isDeleted: false,
   });
   if (!comments) {
     throw new AppError(404, "No comment found", "Comment error");
