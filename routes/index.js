@@ -16,4 +16,9 @@ router.use("/friends", friendRouter);
 /* Comment endpoints. */
 const commentRouter = require("./comment.api");
 router.use("/comments", commentRouter);
+
+/* React endpoints. */
+const reactRouter = require("./reactions.api");
+router.use("/reacts", reactRouter);
+
 module.exports = router;
