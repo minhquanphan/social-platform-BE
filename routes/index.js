@@ -19,6 +19,6 @@ router.use("/comments", commentRouter);
 
 /* Reaction endpoints. */
 const reactionRouter = require("./reactions.api");
-router.use("/reactions", reactRouter);
+router.use("/reactions", reactionRouter);
 
 module.exports = router;
