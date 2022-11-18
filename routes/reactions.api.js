@@ -1,6 +1,9 @@
 const express = require("express");
-const { body } = require("express-validator");
-const { createReactions } = require("../controllers/reaction.controllers");
+const { body, param } = require("express-validator");
+const {
+  createReactions,
+  getAllReactions,
+} = require("../controllers/reaction.controllers");
 
 const { loginRequired } = require("../middlewares/authentication");
 const { validate, checkObjectId } = require("../middlewares/validator");
@@ -14,6 +17,16 @@ router.post(
     body("targetType").exists().isString(),
   ]),
   createReactions
+);
+
+router.get(
+  "/all",
+  loginRequired,
+  validate([
+    body("targetId").exists().isString().custom(checkObjectId),
+    body("targetType").exists().isString(),
+  ]),
+  getAllReactions
 );
 
 module.exports = router;
