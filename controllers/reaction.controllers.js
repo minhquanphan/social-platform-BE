@@ -61,7 +61,8 @@ reactionController.getAllReactions = catchAsync(async (req, res, next) => {
   let reactions = await Reaction.find({ targetId, targetType })
     .sort({ createdAt: -1 })
     .skip(offset)
-    .limit(limit);
+    .limit(limit)
+    .populate("author");
 
   return sendResponse(
     res,
