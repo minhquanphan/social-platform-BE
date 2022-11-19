@@ -29,6 +29,6 @@ router.delete(
   validate([param("postId").exists().isString().custom(checkObjectId)]),
   deletePost
 );
-router.get("/me/all", loginRequired, allPosts);
+router.get("/timeline", loginRequired, allPosts);
 
 module.exports = router;

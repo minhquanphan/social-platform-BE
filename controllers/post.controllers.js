@@ -1,9 +1,10 @@
 // 1. Authenticated user can make a post (POST a post) ✅
 // 2. Author can update post by post's id ✅
 // 3. Author can delete post by post's id ✅
-// 4. Friend can see list of friend's post
+// 4. Author can see list of friend's post ✅
 
 const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
+const Friend = require("../models/Friendship");
 const Post = require("../models/Post");
 
 const postController = {};
@@ -51,13 +52,27 @@ postController.deletePost = catchAsync(async (req, res, next) => {
 });
 
 postController.allPosts = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const friendList = await Friend.find({
+    $or: [{ from: currentUserId }, { to: currentUserId }],
+    status: "accepted",
+  });
+
+  let friendIDs = friendList.map(({ from, to }) => {
+    if (from.equals(currentUserId)) {
+      return to;
+    } else {
+      return from;
+    }
+  });
+
   let { page, limit } = req.query;
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 20;
   const offset = limit * (page - 1);
   const count = await Post.countDocuments({ isDeleted: false });
   const totalPages = Math.ceil(count / limit);
-  let postList = await Post.find({ isDeleted: false })
+  let postList = await Post.find({ author: friendIDs, isDeleted: false })
     .sort({ createdAt: -1 })
     .skip(offset)
     .limit(limit)
