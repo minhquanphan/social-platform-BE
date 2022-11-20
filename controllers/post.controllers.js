@@ -4,8 +4,10 @@
 // 4. Author can see list of friend's post ✅
 
 const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
+const Comment = require("../models/Comment");
 const Friend = require("../models/Friendship");
 const Post = require("../models/Post");
+const Reaction = require("../models/Reaction");
 
 const postController = {};
 
@@ -72,6 +74,7 @@ postController.allPosts = catchAsync(async (req, res, next) => {
   const offset = limit * (page - 1);
   const count = await Post.countDocuments({ isDeleted: false });
   const totalPages = Math.ceil(count / limit);
+
   let postList = await Post.find({ author: friendIDs, isDeleted: false })
     .sort({ createdAt: -1 })
     .skip(offset)
@@ -85,6 +88,32 @@ postController.allPosts = catchAsync(async (req, res, next) => {
     { postList, totalPages },
     null,
     "Successful get post list"
+  );
+});
+
+postController.getPostDetails = catchAsync(async (req, res, next) => {
+  const { postId } = req.params;
+
+  const post = await Post.findOne({ _id: postId, isDeleted: false });
+  if (!post) {
+    throw new AppError(404, "Post not found", "No post found");
+  }
+  let comments = await Comment.find({
+    post: postId,
+    isDeleted: false,
+  });
+
+  const commentReactions = await Reaction.find({ targetId: comments });
+
+  const postReactions = await Reaction.find({ targetId: postId });
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { comments, postReactions, commentReactions },
+    null,
+    "Success"
   );
 });
 

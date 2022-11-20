@@ -5,6 +5,7 @@ const {
   updatePost,
   deletePost,
   allPosts,
+  getPostDetails,
 } = require("../controllers/post.controllers");
 
 const { loginRequired } = require("../middlewares/authentication");
@@ -30,5 +31,12 @@ router.delete(
   deletePost
 );
 router.get("/timeline", loginRequired, allPosts);
+
+router.get(
+  "/:postId",
+  loginRequired,
+  validate([param("postId").exists().isString().custom(checkObjectId)]),
+  getPostDetails
+);
 
 module.exports = router;
