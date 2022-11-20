@@ -113,7 +113,7 @@ postController.getPostDetails = catchAsync(async (req, res, next) => {
     true,
     { comments, postReactions, commentReactions },
     null,
-    "Success"
+    "Successful"
   );
 });
 
