@@ -8,6 +8,7 @@ const {
   getCurrentUserProfile,
   updateCurrentUserProfile,
   deactivate,
+  changePassword,
 } = require("../controllers/user.controllers");
 const { loginRequired } = require("../middlewares/authentication");
 const { validate, checkObjectId } = require("../middlewares/validator");
@@ -46,4 +47,5 @@ router.get(
 );
 router.put("/me/update", loginRequired, updateCurrentUserProfile);
 router.delete("/me/deactive", loginRequired, deactivate);
+router.put("/changePassword", loginRequired, changePassword);
 module.exports = router;

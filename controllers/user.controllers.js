@@ -45,23 +45,20 @@ userController.register = catchAsync(async (req, res, next) => {
 
 userController.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email }, "+password");
+  //check input
+  const user = await User.findOne({ email });
+
   if (!user) {
-    throw new AppError(400, "User not found", "Login error");
+    throw new AppError(400, "User not found", "Login Error");
   }
-  const isMatch = bcrypt.compare(password, user.password);
+
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new AppError(400, "Invalid password", "Wrong password");
+    throw new AppError(400, "Invalid password", "Login Error");
   }
+
   const accessToken = user.generateToken();
-  return sendResponse(
-    res,
-    200,
-    true,
-    { user, accessToken },
-    null,
-    "Login successful"
-  );
+  return sendResponse(res, 200, { user, accessToken }, null, "successful");
 });
 
 userController.getAll = catchAsync(async (req, res, next) => {
@@ -141,6 +138,23 @@ userController.deactivate = catchAsync(async (req, res, next) => {
     throw new AppError(404, "User not found", "Error");
   }
   return sendResponse(res, 200, true, {}, null, "Success");
+});
+
+userController.changePassword = catchAsync(async (req, res, next) => {
+  const { currentUserId } = req;
+  const { password } = req.body;
+  let currentUser = await User.findById(currentUserId);
+  if (!currentUser) {
+    throw new AppError(404, "User not found", "Error");
+  }
+  const salt = await bcrypt.genSalt(10);
+  const newPassword = await bcrypt.hash(password, salt);
+  currentUser = await User.findByIdAndUpdate(
+    currentUserId,
+    { password: newPassword },
+    { new: true }
+  );
+  return sendResponse(res, 200, true, currentUser, null, "Success");
 });
 
 module.exports = userController;
