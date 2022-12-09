@@ -17,7 +17,7 @@ This include all common features of a Social Platform.
 5. Owner can see own user's information ✅
 6. Owner can update own account profile ✅
 7. Owner can deactivate own account ✅
-8. Rocket Search user by name ✅
+8. Search user by name ✅
 
 ### Managing friend relationship (FriendFlow)
 
@@ -94,4 +94,4 @@ This include all common features of a Social Platform.
 
 ## The end
 
-by CoderSchool
+by QuanPhan
